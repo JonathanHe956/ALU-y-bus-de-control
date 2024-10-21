@@ -1,131 +1,121 @@
-int EstadoA = 0;
-int EstadoB = 0;
+  int EstadoA = 0;
+  int EstadoB = 0;
 
-int w = 0;
-int x = 0;
-int y = 0;
-int z = 0;
+  int w = 0;
+  int x = 0;
+  int y = 0;
+  int z = 0;
 
 void setup() {
-  // Configuración de pines de entrada para A, B, w, x, y, z
-  pinMode(2, INPUT); 
-  pinMode(3, INPUT);
-  pinMode(4, INPUT);
-  pinMode(5, INPUT);
-  pinMode(6, INPUT);
-  pinMode(7, INPUT);
-
-  // Configuración de pines de salida para operaciones
-  pinMode(13, OUTPUT);  // Resultado de operación
-  pinMode(12, OUTPUT);  // Acarreo
-  pinMode(11, OUTPUT);  // Signo
-  pinMode(10, OUTPUT);  // Indefinido
-  pinMode(9, OUTPUT);   // Infinito
+  pinMode(2, INPUT);//A
+  pinMode(3, INPUT);//B
+  pinMode(4, INPUT);//w
+  pinMode(5, INPUT);//x
+  pinMode(6, INPUT);//y
+  pinMode(7, INPUT);//z
+  
+  pinMode(13, OUTPUT);//SUMA, RESTA, DIVISION, MULTIPLICACION
+  pinMode(12, OUTPUT);//ACARREO
+  pinMode(11, OUTPUT);//SIGNO
+  pinMode(10, OUTPUT);//INDEFINIDO
+  pinMode(9, OUTPUT);//INFINITO
 }
 
 void loop() {
-  // Lectura de los estados de A, B, w, x, y, z
-  EstadoA = digitalRead(2); 
-  EstadoB = digitalRead(3); 
+
+  EstadoA = digitalRead(2); // Leer valor de A
+  EstadoB = digitalRead(3); // Leer valor de B
   w = digitalRead(4);
   x = digitalRead(5);
   y = digitalRead(6);
   z = digitalRead(7);
 
-  // Operaciones aritméticas
-  realizarOperacionesAritmeticas();
-
-  // Operaciones lógicas
-  realizarOperacionesLogicas();
-
-  // Restablecer los pines de salida a LOW
-  resetearSalidas();
-}
-
-void realizarOperacionesAritmeticas() {
-  // SUMA: A XOR B cuando w = 1 y z, y, x = 0
-  if ((EstadoA ^ EstadoB) && (!z && !y && !x && w)) {
+  // SUMA
+  if ((EstadoA ^ EstadoB)&&(!z && !y && !x && w)) {
     digitalWrite(13, HIGH);
+    digitalWrite(13, LOW);
   }
-
-  // ACARREO: A AND B cuando w = 1 y z, y, x = 0
-  if ((EstadoA && EstadoB) && (!z && !y && !x && w)) {
+  // ACARREO
+  if ((EstadoA && EstadoB)&&(!z && !y && !x && w)) {
     digitalWrite(12, HIGH);
+    digitalWrite(12, LOW);
   }
-
-  // RESTA: A XOR B cuando x = 1, w = 0 y z, y = 0
-  if ((EstadoA ^ EstadoB) && (!z && !y && x && !w)) {
+  //RESTA
+  if ((EstadoA ^ EstadoB)&&(!z && !y && x && !w)) {
     digitalWrite(13, HIGH);
+    digitalWrite(13, LOW);
   }
-
-  // SIGNO NEGATIVO: !A AND B cuando x = 1, w = 0 y z, y = 0
-  if ((!EstadoA && EstadoB) && (!z && !y && x && !w)) {
+  //SIGNO NEGATIVO DE LA RESTA
+  if ((!EstadoA && EstadoB)&&(!z && !y && x && !w)) {
     digitalWrite(11, HIGH);
+    digitalWrite(11, LOW);
   }
 
-  // MULTIPLICACIÓN: A AND B cuando w = 1, x = 1 y z, y = 0
-  if ((EstadoA && EstadoB) && (!z && !y && x && w)) {
+  //MULTIPLICACION
+  if ((EstadoA && EstadoB)&&(!z && !y && x && w)) {
     digitalWrite(13, HIGH);
+    digitalWrite(13, LOW);
   }
 
-  // DIVISIÓN: A AND B cuando y = 1 y z, x, w = 0
-  if ((EstadoA && EstadoB) && (!z && y && !x && !w)) {
+  //DIVISION
+  if ((EstadoA && EstadoB)&&(!z && y && !x && !w)) {
     digitalWrite(13, HIGH);
+    digitalWrite(13, LOW);
   }
-
-  // INDEFINIDO: !A AND !B cuando y = 1 y z, x, w = 0
-  if ((!EstadoA && !EstadoB) && (!z && y && !x && !w)) {
+  //INDEFINIDO
+  if ((!EstadoA && !EstadoB)&&(!z && y && !x && !w)) {
     digitalWrite(10, HIGH);
+    digitalWrite(10, LOW);
   }
-
-  // INFINITO: A AND !B cuando y = 1 y z, x, w = 0
-  if ((EstadoA && !EstadoB) && (!z && y && !x && !w)) {
+  //INFINITO
+  if ((EstadoA && !EstadoB)&&(!z && y && !x && !w)) {
     digitalWrite(9, HIGH);
+    digitalWrite(9, LOW);
   }
-}
 
-void realizarOperacionesLogicas() {
-  // AND: A AND B cuando y = 1 y x = 0, w = 1, z = 0
+  // AND
   if ((EstadoA && EstadoB) && (!z && y && !x && w)) {
     digitalWrite(13, HIGH);
+    digitalWrite(13, LOW);
   }
 
-  // OR: A OR B cuando y = 1 y x = 1, w = 0, z = 0
+  // OR
   if ((EstadoA || EstadoB) && (!z && y && x && !w)) {
     digitalWrite(13, HIGH);
+    digitalWrite(13, LOW);
   }
 
-  // NOT A cuando w = 1, x = 1, y = 1, z = 0
-  if (!z && y && x && w) {
-    digitalWrite(13, EstadoA ? LOW : HIGH);
+  // NOT
+if ((!z && y && x && w)) {
+    if (!EstadoA) {
+      digitalWrite(13, HIGH);
+      digitalWrite(13, LOW);
+    } else {
+      digitalWrite(13, LOW);
+    }
   }
 
-  // XOR: A XOR B cuando z = 1 y y, x, w = 0
+  // XOR
   if ((EstadoA ^ EstadoB) && (z && !y && !x && !w)) {
     digitalWrite(13, HIGH);
+    digitalWrite(13, LOW);
   }
 
-  // XNOR: !(A XOR B) cuando z = 1 y w = 1, y, x = 0
+  // XNOR
   if (!(EstadoA ^ EstadoB) && (z && !y && !x && w)) {
     digitalWrite(13, HIGH);
+    digitalWrite(13, LOW);
   }
 
-  // NAND: !(A AND B) cuando z = 1 y x = 1, y = 0, w = 0
+  // NAND
   if (!(EstadoA && EstadoB) && (z && !y && x && !w)) {
     digitalWrite(13, HIGH);
+    digitalWrite(13, LOW);
   }
 
-  // NOR: !(A OR B) cuando z = 1 y x = 1, y = 0, w = 1
+  // NOR
   if (!(EstadoA || EstadoB) && (z && !y && x && w)) {
     digitalWrite(13, HIGH);
+    digitalWrite(13, LOW);
   }
-}
-
-// Función para resetear las salidas
-void resetearSalidas() {
-  digitalWrite(13, LOW);
-  digitalWrite(12, LOW);
-  digitalWrite(11, LOW);
-  digitalWrite(10, LOW);
-  digitalWrite(9, LOW);
 }
